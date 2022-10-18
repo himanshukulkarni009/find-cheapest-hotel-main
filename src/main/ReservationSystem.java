@@ -10,13 +10,13 @@ public class ReservationSystem {
         this.hotels = hotels;
     }
 
-    public Hotel findCheapestHotel() {
+/*    public Hotel findCheapestHotel() {
 //        return hotels.stream().sorted(Comparator.comparingDouble(Hotel::getRate)).findFirst().get();
 //        return hotels.stream().min(Comparator.comparingDouble(Hotel::getRate)).get();
-        return hotels.stream().reduce((hotel1, hotel2) -> hotel1.getWeekdayRate() < hotel2.getWeekdayRate() ? hotel1 : hotel2).get();
-    }
+        return hotels.stream().reduce((hotel1, hotel2) -> hotel1.getRegularWeekDay() < hotel2.getRegularWeekDay() ? hotel1 : hotel2).get();
+    }*/
 
-    public Hotel findCheapestHotel(LocalDate givenDay) {
-        return hotels.stream().reduce((hotel1, hotel2) -> hotel1.getRate(givenDay) < hotel2.getRate(givenDay) ? hotel1 : hotel2).get();
+    public Hotel findCheapestHotel(LocalDate givenDay, CustomerType customerType) {
+        return hotels.stream().reduce((hotel1, hotel2) -> hotel1.getRate(givenDay, customerType) < hotel2.getRate(givenDay, customerType) ? hotel1 : hotel2).get();
     }
 }

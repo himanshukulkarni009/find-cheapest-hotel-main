@@ -2,41 +2,43 @@ package main;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Hotel {
-    private final double weekdayRate;
-    private final double weekEndRate;
+    private final List<HotelRates> hotelRatesList;
     private final String name;
 
-    public Hotel(double weekdayRate, double weekEndRate, String name) {
-        this.weekdayRate = weekdayRate;
-        this.weekEndRate = weekEndRate;
+    public Hotel(List<HotelRates> hotelRatesList, String name) {
+        this.hotelRatesList = hotelRatesList;
         this.name = name;
-    }
-
-    public double getWeekdayRate() {
-        return weekdayRate;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Hotel)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Hotel hotel = (Hotel) o;
-        return Double.compare(hotel.getWeekdayRate(), getWeekdayRate()) == 0 &&
-                Objects.equals(name, hotel.name);
+        return hotelRatesList.equals(hotel.hotelRatesList) && name.equals(hotel.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getWeekdayRate(), name);
+        return Objects.hash(hotelRatesList, name);
     }
 
-    public double getRate(LocalDate givenDate) {
-        if (givenDate.getDayOfWeek().equals(DayOfWeek.SUNDAY) || givenDate.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
-            return weekEndRate;
+    public double getRate(LocalDate givenDate, CustomerType customerType) {
+        Optional<HotelRates> hotelRate = hotelRatesList.stream().filter(rate -> rate.getCustomerType().equals(customerType)).findFirst();
+
+        if(hotelRate.isPresent()) {
+            if (givenDate.getDayOfWeek().equals(DayOfWeek.SUNDAY) || givenDate.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                return hotelRate.get().getWeekEndRate();
+            }
+            return hotelRate.get().getWeekDayRate();
+        } else {
+            throw new RuntimeException("Customer not supported");
         }
-        return weekdayRate;
+
     }
 }
