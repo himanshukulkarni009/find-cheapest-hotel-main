@@ -1,18 +1,22 @@
 package main;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Hotel {
-    private final double rate;
+    private final double weekdayRate;
+    private final double weekEndRate;
     private final String name;
 
-    public Hotel(double rate, String name) {
-        this.rate = rate;
+    public Hotel(double weekdayRate, double weekEndRate, String name) {
+        this.weekdayRate = weekdayRate;
+        this.weekEndRate = weekEndRate;
         this.name = name;
     }
 
-    public double getRate() {
-        return rate;
+    public double getWeekdayRate() {
+        return weekdayRate;
     }
 
     @Override
@@ -20,12 +24,19 @@ public class Hotel {
         if (this == o) return true;
         if (!(o instanceof Hotel)) return false;
         Hotel hotel = (Hotel) o;
-        return Double.compare(hotel.getRate(), getRate()) == 0 &&
+        return Double.compare(hotel.getWeekdayRate(), getWeekdayRate()) == 0 &&
                 Objects.equals(name, hotel.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRate(), name);
+        return Objects.hash(getWeekdayRate(), name);
+    }
+
+    public double getRate(LocalDate givenDate) {
+        if (givenDate.getDayOfWeek().equals(DayOfWeek.SUNDAY) || givenDate.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+            return weekEndRate;
+        }
+        return weekdayRate;
     }
 }
